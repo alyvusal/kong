@@ -1,0 +1,113 @@
+ingressController:
+  enabled: true
+  env:
+    publish_service: kong/kong-dp-kong-proxy
+    # kong_admin_token: kong_admin_password
+  # deployment.kong.enabled and ingressController.gatewayDiscovery.enabled are mutually exclusive and cannot be enabled at once.
+  # Gateway discovery requires a split release installation of Gateways and Ingress Controller.
+  # gatewayDiscovery:
+  #   enabled: true
+  #   generateAdminApiService: true
+
+podAnnotations:
+  kuma.io/gateway: enabled
+  # This port must match your Kong admin API port. 8444 is the default.
+  # If you set gateway.admin.tls.containerPort, change these annotations
+  # to use that value.
+  traffic.kuma.io/exclude-outbound-ports: "8444"
+  traffic.sidecar.istio.io/excludeOutboundPorts: "8444"
+
+# Kong Enterprise
+# image:
+#   repository: kong/kong-gateway
+#   tag: "3.11"
+
+# Mount the secret created earlier
+secretVolumes:
+  - kong-cluster-cert
+
+env:
+  # This is a control_plane node
+  role: control_plane
+  # These certificates are used for control plane / data plane communication
+  cluster_cert: /etc/secrets/kong-cluster-cert/tls.crt
+  cluster_cert_key: /etc/secrets/kong-cluster-cert/tls.key
+
+  # Database
+  # CHANGE THESE VALUES
+  database: postgres
+  pg_database: kong
+  pg_user: kong
+  pg_password: demo123
+  pg_host: kong-cp-postgresql.kong.svc.cluster.local
+  pg_ssl: "on"
+
+  # Kong Manager password, username is kong_admin
+  password: kong_admin_password
+
+  # Manager (UI, Enterprise only)
+  # Authentication and Authorization in Kong Manager is an Enterprise-only feature.
+  # https://developer.konghq.com/gateway/kong-manager/configuration
+  # admin_gui_url: http://manager-172.18.0.2.nip.io
+  # admin_gui_api_url: http://admin-172.18.0.2.nip.io
+  # Change the secret and set cookie_secure to true if using an HTTPS endpoint
+  # admin_gui_session_conf: '{"secret":"Y29vbGJlYW5z","storage":"kong","cookie_secure":false}'
+
+# The control plane serves the Admin API
+admin:
+  enabled: true
+  type: ClusterIP
+  http:
+    enabled: true
+  tls:
+    enabled: false
+  ingress:
+    enabled: true
+    hostname: admin-172.18.0.2.nip.io
+    path: /
+    pathType: Prefix
+    ingressClassName: kong
+
+manager:
+  enabled: true
+  type: ClusterIP
+  http:
+    enabled: true
+  tls:
+    enabled: false
+  ingress:
+    enabled: true
+    hostname: manager-172.18.0.2.nip.io
+    path: /
+    pathType: Prefix
+    ingressClassName: kong
+
+# Clustering endpoints are required in hybrid mode
+cluster:
+  enabled: true
+  tls:
+    enabled: true
+
+clustertelemetry:
+  enabled: true
+  tls:
+    enabled: true
+
+# These roles will be served by different Helm releases
+proxy:
+  enabled: false
+
+# Enterprise functionality
+# enterprise:
+#   enabled: true
+#   rbac:
+#     enabled: true
+#     admin_gui_auth: basic-auth  # needed for admin_gui_session_conf
+
+# This is for testing purposes only
+# DO NOT DO THIS IN PRODUCTION
+# Your cluster needs a way to create PersistentVolumeClaims if this option is enabled
+# postgresql:
+#   enabled: true
+#   auth:
+#     password: demo123

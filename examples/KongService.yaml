@@ -1,0 +1,11 @@
+kind: KongService
+apiVersion: configuration.konghq.com/v1alpha1
+metadata:
+  name: service
+spec:
+  name: service
+  host: httpbin.konghq.com
+  controlPlaneRef:
+    type: konnectNamespacedRef
+    konnectNamespacedRef:
+      name: gateway-control-plane

@@ -1,0 +1,14 @@
+kind: KongRoute
+apiVersion: configuration.konghq.com/v1alpha1
+metadata:
+  name: route-with-service
+spec:
+  name: route-with-service
+  protocols:
+  - http
+  paths:
+  - "/"
+  serviceRef:
+    type: namespacedRef
+    namespacedRef:
+      name: service

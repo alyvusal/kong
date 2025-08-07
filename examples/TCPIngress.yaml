@@ -1,0 +1,37 @@
+apiVersion: configuration.konghq.com/v1beta1
+kind: TCPIngress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: internal-tcp
+    konghq.com/protocols: tls_passthrough
+  name: kafka-tcp-ing
+  namespace: kafka
+spec:
+  tls:
+  - secretName: kafka-ssl-secrets-123
+    hosts:
+      - kafka.beta.example.com
+      - kafka-0.beta.example.com
+      - kafka-1.beta.example.com
+      - kafka-2.beta.example.com
+  rules:
+  - host: kafka.beta.example.com
+    backend:
+      serviceName: kafka-cluster-kafka-tls-bootstrap
+      servicePort: 9094
+    port: 9094
+  - host: kafka-0.beta.example.com
+    backend:
+      serviceName: kafka-cluster-kafka-tls-0
+      servicePort: 9094
+    port: 9094
+  - host: kafka-1.beta.example.com
+    backend:
+      serviceName: kafka-cluster-kafka-tls-1
+      servicePort: 9094
+    port: 9094
+  - host: kafka-2.beta.example.com
+    backend:
+      serviceName: kafka-cluster-kafka-tls-2
+      servicePort: 9094
+    port: 9094

@@ -1,0 +1,8 @@
+image:
+  tag: 1.6.1
+
+kubernetes-configuration-crds:
+  enabled: true
+
+env:
+  ENABLE_CONTROLLER_KONNECT: true
