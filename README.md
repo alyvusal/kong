@@ -22,7 +22,7 @@ kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/downloa
     - **DB Less Mode**: In this mode the entire configuration is managed in-memory loaded from a configuration file.
       - Some of the pulugins like rate limiting will not work fully in a DB less model.
     - **DB Mode (Traditional)**: persists all the configurations in a DB with a couple of choices(Cassandra / PostgreSQL). It's also important to note that kong stores all the configuration in memory for better performance. DB is reached mostly to refresh config on change. Cassandra has its own advantage of horizontal scaling to match the horizontal scalability of Kong. The fully functional mode for Kong Gateway is traditional mode (also known as DB mode). in traditional mode, you cannot push configs using Kubernetes CRDs. CRDs are used with Kong Ingress Controller or Kong Gateway Operator in Kubernetes environments, not with traditional mode.
-- **Ingress Cotroller**: Configure Kong Gateway using Kubernetes-native resources such as httproute and ingress.
+- **Ingress Controller**: Configure Kong Gateway using Kubernetes-native resources such as httproute and ingress.
 
 **CRDs (Custom Resource Definitions)** are used to provide a Kubernetes-native way to configure Kong Gateway. Both the Kong Ingress Controller (KIC) and the Kong Gateway Operator use CRDs, but in different ways:
 

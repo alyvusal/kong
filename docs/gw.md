@@ -93,6 +93,14 @@ helm upgrade -i kong-dp-dbless kong/kong \
   --version 2.51.0 \
   -f k8s/helm/kong-dp-dbless.yaml
 
+
+# Kong Gateway uses mTLS to secure the control plane/data plane communication when running in hybrid mode.
+openssl req -new -x509 -nodes -newkey ec:<(openssl ecparam -name secp384r1) \
+  -keyout /tmp/tls.key -out /tmp/tls.crt -days 1095 -subj "/CN=kong_clustering"
+
+# Create a Kubernetes secret containing the certificate.
+kubectl -n kong create secret tls kong-cluster-cert --cert=/tmp/tls.crt --key=/tmp/tls.key
+
 # Generate sample config file (generates a file named kong.yml), login to pod
 kong config init /tmp/kong.yml
 
