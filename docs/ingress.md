@@ -13,20 +13,21 @@ helm upgrade -i kong-ingress kong/ingress \
   -f k8s/helm/ingress.yaml
 ```
 
+This deploys controllers and a Kong Gateway data plane (Proxy) in a single chart.
+
 ## Operator
 
 Platform: on-prem
 
-```bash
-# CRDs
-kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.3.0/standard-install.yaml
+Install [Gateway CRDS](../README.md#install-kubernetes-gateway-api-crds) first.
 
+```bash
 helm upgrade -i kgo kong/gateway-operator \
   -n kong --create-namespace \
   --version 0.6.1 \
   -f k8s/helm/gateway-operator.yaml
 
-kubectl apply -f k8s/kgo-config.yaml
+kubectl apply -f k8s/manifests/kong-gateway-operator/kgo-config.yaml
 
 kubectl get -n kong gateway kong -o wide
 

@@ -1,0 +1,36 @@
+# necessaru for gui
+admin:
+  enabled: true
+  type: ClusterIP
+  http:
+    enabled: true
+  tls:
+    enabled: false
+  ingress:
+    enabled: true
+    hostname: admin-172.18.0.2.nip.io
+    path: /
+    pathType: Prefix
+    ingressClassName: kong
+
+manager:
+  enabled: true
+  type: ClusterIP
+  http:
+    enabled: true
+  tls:
+    enabled: false
+  ingress:
+    enabled: true
+    hostname: manager-172.18.0.2.nip.io
+    path: /
+    pathType: Prefix
+    ingressClassName: kong
+
+env:
+  # enable all plugins
+  plugins: 'bundled,oidc,custom-error-pages'
+
+image:
+  repository: alyvusal/kong
+  tag: "3.9.1"

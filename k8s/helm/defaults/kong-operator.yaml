@@ -1,6 +1,8 @@
 image:
   repository: docker.io/kong/kong-operator
-  tag: "2.0.0-alpha.2"
+  tag: "2.0"
+  # If you want only the digest to be used, set tag to "" in your values.yaml.
+  digest: ""
   # Optionally set a semantic version for version-gated features. This can normally
   # be left unset. You only need to set this if your tag is not a semver string,
   # such as when you are using a "next" tag. Set this to the effective semantic
@@ -31,9 +33,13 @@ extraLabels: {}
 podLabels: {}
 # Annotations to be added to KGO pods
 podAnnotations: {}
-# Install KIC's CRDs
-kic-crds:
+# Install KO's CRDs
+ko-crds:
+  # Installation of CRDs is performed. For multiple installations
+  # of KO in cluster only for one it should be enabled.
   enabled: true
+  # CRDs are not uninstalled with Chart (it doesn't matter when enabled: false).
+  keep: true
 # Install Gateway API standard CRDs
 gwapi-standard-crds:
   enabled: true
@@ -99,4 +105,43 @@ certsDir:
 # Override the default deployment selector labels. This is useful if you don't want
 # to use the defaults or are migrating to this chart and want to use existing labels.
 # selectorLabels: []
+
+# enable configuration dump for control planes.
+enableControlplaneConfigDump: false
+controlplaneConfigDumpPort: 10256
+# Global options that configure the operator behavior.
+global:
+  # Options for controlling ValidatingAdmissionPolicy and ValidatingAdmissionPolicyBinding
+  # resources deployed by this chart.
+  validatingPolicies:
+    dataplanePorts:
+      # Enable validation for dataplane ports.
+      enabled: true
+    konnectDataplaneAutoscale:
+      # Enable validation for konnectclouddataplanegroupconfig autoscale type.
+      enabled: true
+  webhooks:
+    options:
+      certManager:
+        # Enable cert-manager integration.
+        # This requires to have cert-manager installed in the cluster.
+        # Setting this to true will generate cert-manager's Certificate and Issuer
+        # objects for the conversion webhook Service.
+        # If disabled, this chart will generate a self-signed certificate and inject
+        # it into CRDs' conversion webhook caBundle.
+        # It is recommended to enable cert-manager integration for production use.
+        enabled: false
+    # Enable conversion webhook for CRDs.
+    # See note at https://github.com/Kong/kong-operator/blob/main/charts/kong-operator/CHANGELOG.md#%EF%B8%8F-important-notice-about-migration-webhooks
+    # for more.
+    conversion:
+      # Some old CRDs pre KO 2.0.0 are deprecated now, conversion webhook ensures
+      # compatibility for those old ones - conversion is handled automatically.
+      # If it's disabled, deprecated CRDs won't be installed and can't be applied.
+      enabled: true
+    # Enable validating admission webhook for ControlPlane resources.
+    validating:
+      # Enable the creation of ValidatingWebhookConfiguration for resources
+      # which will be consumed by the ControlPlane(s).
+      enabled: true
 

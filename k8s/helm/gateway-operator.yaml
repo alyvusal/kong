@@ -1,6 +1,19 @@
 image:
   tag: 1.6.1
 
+
+# Install KIC's CRDs
+kic-crds:
+  enabled:
+
+# Install Gateway API standard CRDs
+gwapi-standard-crds:
+  enabled: false
+
+# Install Gateway API experimental CRDs
+gwapi-experimental-crds:
+  enabled: false
+
 kubernetes-configuration-crds:
   enabled: true
 

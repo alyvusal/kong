@@ -2,16 +2,29 @@
 
 Read about [Charts](https://github.com/Kong/charts?tab=readme-ov-file#charts)
 
-```bash
-helm repo add kong https://charts.konghq.com
+**TLDR;**
 
-# Install the Gateway API CRDs
-# This command will install all resources that have graduated to GA or beta, including GatewayClass, Gateway, HTTPRoute, and ReferenceGrant.
-kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.0.0/standard-install.yaml
+For an on‑prem Kubernetes cluster using only free components, use Kong Gateway OSS with Kong Ingress Controller, not Konnect or enterprise features.
 
-# Or, if you want to use experimental resources and fields such as TCPRoutes and UDPRoutes, please run this command.
-kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.0.0/experimental-install.yaml
-```
+Use this for a simple, free setup (recommended):
+
+- kong/ingress – installs Kong Ingress Controller (KIC) + Kong Gateway (DB‑less, OSS by default). [Install KIC]. The default values install KIC in Gateway Discovery mode with a DB‑less Kong Gateway, which is the recommended topology. [Install KIC]
+
+Alternative if you want to manage Gateway yourself (no KIC):
+
+- kong/kong – installs Kong Gateway only (can be OSS) and you configure it via Admin API, decK, Terraform, etc. [Kong on‑prem Helm]
+
+Do not use for your case (based on your requirements):
+
+- kong/gateway-operator and kong/kong-operator – Kong Operator is focused on Konnect and CRD‑driven deployments, and the Konnect‑focused install is explicitly marked as incompatible with on‑prem in that guide. [Operator install]
+Operator is useful if you want declarative CRDs to provision CP/DPs, but it adds complexity and isn’t required for a basic free, on‑prem setup.
+
+So for a free, Kubernetes‑native, on‑prem deployment:
+
+- Start with kong/ingress (KIC + OSS Gateway).
+- Use kong/kong only if you prefer to manage Kong Gateway directly rather than through Kubernetes CRDs.
+
+**Long:**
 
 - **Data Plane**: The Kong Gateway data plane is responsible for processing incoming traffic. It receives the routing configuration from the control plane using the clustering endpoint. This is built over Nginx as the base
   - **Gateway**: This is proxy server which is node of Data plane
@@ -30,6 +43,19 @@ kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/downloa
 - Kong Gateway Operator: The Operator is also Kubernetes-native and is driven entirely by CRDs. It allows you to deploy and configure Kong’s products in a fully declarative way using Kubernetes resources About Kong Gateway Operator.
 
 **NOTE** `kong/kong-operator` is new name for `kong/gateway-operator`. Github page always redirects to kong-operator for both
+
+## Install [Kubernetes Gateway API](https://github.com/kubernetes-sigs/gateway-api) CRDs
+
+```bash
+helm repo add kong https://charts.konghq.com
+
+# Install the Gateway API CRDs
+# This command will install all resources that have graduated to GA or beta, including GatewayClass, Gateway, HTTPRoute, and ReferenceGrant.
+kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.4.0/standard-install.yaml
+
+# Or, if you want to use experimental resources and fields such as TCPRoutes and UDPRoutes, please run this command.
+kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.4.0/experimental-install.yaml
+```
 
 ## [Install Kong Ingress Controller (KIC)](./docs/ingress.md)
 

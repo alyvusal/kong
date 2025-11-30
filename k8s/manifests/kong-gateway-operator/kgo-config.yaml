@@ -10,14 +10,14 @@ spec:
         spec:
           containers:
           - name: proxy
-            image: kong:3.9.1
+            image: kong
   controlPlaneOptions:
     deployment:
       podTemplateSpec:
         spec:
           containers:
           - name: controller
-            image: kong/kubernetes-ingress-controller:
+            image: kong/kubernetes-ingress-controller
             env:
             - name: CONTROLLER_LOG_LEVEL
               value: debug

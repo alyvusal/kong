@@ -27,14 +27,14 @@ kubectl -n kong create secret tls kong-cluster-cert --cert=/tmp/tls.crt --key=/t
 # The control plane contains all Kong Gateway configurations. The configuration is stored in a PostgreSQL database.
 helm upgrade -i kong-cp kong/kong \
   -n kong \
-  --version 2.51.0 \
+  --version 2.52.0 \
   -f k8s/helm/kong-cp.yaml
 
 # Create a Data Plane
 # The Kong Gateway data plane is responsible for processing incoming traffic. It receives the routing configuration from the control plane using the clustering endpoint.
 helm upgrade -i kong-dp kong/kong \
   -n kong \
-  --version 2.51.0 \
+  --version 2.52.0 \
   -f k8s/helm/kong-dp.yaml
 ```
 
@@ -90,7 +90,7 @@ Use Manager UI to create yaml config and copy to kong.yml
 ```bash
 helm upgrade -i kong-dp-dbless kong/kong \
   -n kong \
-  --version 2.51.0 \
+  --version 2.52.0 \
   -f k8s/helm/kong-dp-dbless.yaml
 
 
@@ -111,10 +111,20 @@ kong config parse /tmp/kong.yml
 cat /tmp/kong.yml
 
 # Apply your declarative kong config file
-kubectl create configmap kong-config --from-file=kong.yml=k8s/kong.yml --dry-run=client -o yaml | kubectl apply -n kong -f -  # kubectl apply -f k8s/kong-config-dbless.yaml
+kubectl create configmap kong-config --from-file=kong.yml=k8s/kong.yml --dry-run=client -o yaml | kubectl apply -n kong -f -
+# kubectl apply -f k8s/kong-config-dbless.yaml
 
 # After applying new file
 kubectl rollout restart deployment kong-dp-dbless-kong
+```
+
+### DB-less mode with Kong Ingress Controller
+
+```bash
+helm upgrade -i kong kong/kong \
+  -n kong --create-namespace \
+  --version 2.52.0 \
+  -f k8s/helm/kong-dbless-aio.yaml
 ```
 
 ## [Operator](https://developer.konghq.com/operator/dataplanes/get-started/hybrid/install/)
