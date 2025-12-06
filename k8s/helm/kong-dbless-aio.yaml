@@ -8,7 +8,7 @@ admin:
     enabled: false
   ingress:
     enabled: true
-    hostname: admin-172.18.0.2.nip.io
+    hostname: admin-172.19.0.2.nip.io
     path: /
     pathType: Prefix
     ingressClassName: kong
@@ -22,7 +22,7 @@ manager:
     enabled: false
   ingress:
     enabled: true
-    hostname: manager-172.18.0.2.nip.io
+    hostname: manager-172.19.0.2.nip.io
     path: /
     pathType: Prefix
     ingressClassName: kong
@@ -30,6 +30,9 @@ manager:
 env:
   # enable all plugins
   plugins: 'bundled,oidc,custom-error-pages'
+  nginx_proxy_set: '$$session_secret 3fdhRcj/gLo5YDc+VVxbbYjr4GusAvsY/szj7pEsNdI='
+  # KONG_X_SESSION_SECRET: "dks5eEpabTVxUjh3TjNwTDd0WWhGNmVVNHNEMmFHMWJIalQ0bVE4Y1czcD0K"
+  # session_secret: "dks5eEpabTVxUjh3TjNwTDd0WWhGNmVVNHNEMmFHMWJIalQ0bVE4Y1czcD0K"
 
 image:
   repository: alyvusal/kong
